@@ -1,0 +1,2 @@
+git push origin master
+heroku push origin master
