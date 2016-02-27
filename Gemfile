@@ -41,6 +41,10 @@ gem 'devise-async', '~> 0.10.1'
 # replaces webrick server for production server
 gem 'puma', '~> 2.16'
 
+#styling
+gem 'bootstrap-sass', '~> 3.3.6'
+
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
