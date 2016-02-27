@@ -32,6 +32,15 @@ gem 'devise', '~> 3.5', '>= 3.5.6'
 # makes messages prettier and easy to read
 gem 'awesome_print', '~> 1.6', '>= 1.6.1'
 
+# for use with reddis background processing works well with apartment gem as well
+gem 'sidekiq', '~> 4.1'
+
+# background email processing
+gem 'devise-async', '~> 0.10.1'
+
+# replaces webrick server for production server
+gem 'puma', '~> 2.16'
+
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
