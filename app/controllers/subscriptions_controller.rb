@@ -1,42 +1,174 @@
 class SubscriptionsController < ApplicationController
-	before_action :authenticate_user!
-	def new
-		@plans = Plan.all
-	end
+    
+    before_action :authenticate_user!
+    
 
-	def create
-		# Get the credit card details submitted by the form
-		token 	= params[:stripeToken]
+    def new
+        @plans = Plan.all
+    end
 
-		plan 		= params[:plan][:stripe_id]
-		email 	= current_user.email
+    def edit
+        @account = Account.find(params[:id])
+        @plans   = Plan.all
+    end
 
-		# Create a Customer
-		customer = Stripe::Customer.create(
-		  :source => token,
-		  :plan => plan,
-		  :email => email
-		)
+    def index
+        @account = Account.find_by_email(current_user.email)
+    end
 
-		subscriptions = customer.subscriptions
-		subscribed_plan = subscriptions.data.find{ |o| o.plan.id == plan}
-		#Get current period end - This is a unix timestamp
-		current_period_end = subscribed_plan.current_period_end
-		#Convert to datetime
-		active_until = Time.at(current_period_end).to_datetime
+   
 
-		# Customer created with a valid subscriptions
-		# So, update Account model 
+   
 
-		account = Account.find_by_email(current_user.email)
-		account.stripe_plan_id = plan
-		account.customer_id = customer.id
-		account.active_until = active_until
-		account.save!
+    def create
+        # Get the credit card details submitted by the form
+        token           = params[:stripeToken]
+        plan            = params[:plan][:stripe_id]
+        email           = current_user.email
+        current_account = Account.find_by_email(current_user.email)
+        customer_id     = current_account.customer_id
+        current_plan 	= current_account.stripe_plan_id
 
-		redirect_to :root, :notice => "Successfully subscribed!"
+        if customer_id.nil?
+            #New customer -> Create a customer
+            #Create a Customer
+            @customer = Stripe::Customer.create(
+              :source => token,
+              :plan   => plan,
+              :email  => email
+            )
 
-	rescue => e
-		redirect_to :new_subscription, :flash => { :error => e.message }
-	end
+            subscriptions           = @customer.subscriptions
+            @subscribed_plan        = subscriptions.data.find{|o| o.plan.id == plan}
+            
+
+
+        else
+            # Customer exists
+            # Get customer from Stripe
+            @customer               = Stripe::Customer.retrieve(customer_id)
+            # Get current plan if any
+            @subscribed_plan        = create_or_update_subscription(@customer, current_plan, plan)
+
+        end
+
+            
+            # Get period end - This is a unix timestamp
+            current_period_end      = @subscribed_plan.current_period_end
+            # Convert to datetime
+            active_until            = Time.at(current_period_end).to_datetime
+
+            ###### End here .. Laurie
+
+        
+        save_account_details(current_account, plan, @customer.id, active_until)
+
+        
+
+        redirect_to :root, :notice => "Successfully subscribed to #{plan}" #Plan-name
+
+     rescue => e 
+        redirect_to :back, :flash => {:error => e.message }
+
+    end
+
+
+    def cancel_subscription
+        email           = current_user.email
+        current_account = Account.find_by_email(current_user.email)
+        customer_id     = current_account.customer_id
+        current_plan    = current_account.stripe_plan_id
+
+        if current_plan.blank?
+            raise "No plan found to unsubscribe/cancel"
+        end
+
+        #Fetch customer from Stripe
+        customer = Stripe::Customer.retrieve(customer_id)
+
+        #Get customer's subscriptions
+        subscriptions = customer.subscriptions
+
+        #Find the subscription that we want to cancel
+        current_subscribed_plan = subscriptions.data.find { |o| o.plan.id == current_plan }
+
+        if current_subscribed_plan.blank?
+            raise "Subscription not found"
+        end
+
+        #Delete it
+        current_subscribed_plan.delete({:at_period_end => true})
+
+        #Update account model
+        save_account_details(current_account, "", Time.at(0).to_datetime)
+
+        @message = "Subscription cancelled successfully"
+
+    rescue => e
+        redirect_to "/subscriptions", :flash => {:error => e.message}
+    end
+
+    def update_card
+    end
+
+    def update_card_details
+        # Take the token given by stripe and set it as new source for customer transactions. 
+        token           = params[:stripeToken]
+        # Get the customer id
+        current_account = Account.find_by_email(current_user.email)
+        customer_id     = current_account.customer_id
+        # Fetch customer from Stripe
+        ap customer_id
+        ap token
+
+        customer = Stripe::Customer.retrieve(customer_id)
+        # Set value of source to token (see api for cu.source)
+        customer.source = token
+        customer.save
+
+        redirect_to "/subscriptions", :notice => "Card updated successfuly"
+
+    rescue => e
+        redirect_to :action => "update_card", :flash => { :error => e.message }
+
+
+    end
+
+    def save_account_details(account, plan, customer_id, active_until)
+        #Update account with details
+        account.stripe_plan_id  = plan
+        account.customer_id     = customer_id
+        account.active_until    = active_until
+        account.save!
+    end
+
+    #Doc
+    def create_or_update_subscription(customer, current_plan, new_plan)
+        subscriptions = customer.subscriptions
+
+        #Get current subscriptions
+        current_subscription = subscriptions.data.find{ |o| o.plan.id == current_plan }
+
+        if current_subscription.blank?
+            #No current subscription
+            #Maybe the customer unsubscribed previously or the card was declined
+            #So, create a new subscription to existing customer
+            subscription = customer.subscriptions.create({:plan => new_plan })
+        else
+            #Existing subscription found
+            #Must be an upgrade or a downgrade
+            #So update eistig subscription with new plan
+            current_subscription.plan = new_plan
+            subscription = current_subscription.save
+        end
+
+        return subscription
+
+
+    end
+
+
+    
 end
+
+
