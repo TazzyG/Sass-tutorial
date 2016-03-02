@@ -100,7 +100,7 @@ class SubscriptionsController < ApplicationController
         current_subscribed_plan.delete({:at_period_end => true})
 
         #Update account model
-        save_account_details(current_account, "", Time.at(0).to_datetime)
+        save_account_details(current_account, "", customer_id, Time.at(0).to_datetime)
 
         @message = "Subscription cancelled successfully"
 
