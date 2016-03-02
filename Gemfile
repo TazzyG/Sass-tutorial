@@ -51,6 +51,11 @@ gem 'stripe', '~> 1.36'
 # fix bundle errors 
 gem 'nokogiri'
 
+# for processing stripe events
+gem 'stripe_event', '~> 1.5'
+
+
+
 
 
 # Use ActiveModel has_secure_password
@@ -71,5 +76,10 @@ group :development, :test do
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
+
+  # For forwarding stripe events with localhost
+  
+  gem 'ultrahook'
+
 end
 
