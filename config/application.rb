@@ -8,6 +8,10 @@ Bundler.require(*Rails.groups)
 
 module Myfriendlyroad
   class Application < Rails::Application
+
+    # the new line added for autoload of lib  https://hackhands.com/rails-nameerror-uninitialized-constant-class-solution/
+    config.autoload_paths += %W(#{config.root}/lib)
+
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.

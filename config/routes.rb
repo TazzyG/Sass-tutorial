@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
   #Devise routes with custom registrations controller
-  devise_for :users, controllers: { registrations: "registrations" }
+  devise_for :users, controllers: { registrations: "registrations", sessions: "sessions" }
   resources :weather_grid
  
 
@@ -12,7 +12,7 @@ Rails.application.routes.draw do
 
   root to: "home#index"
 
-  mount StripeEvent::Engine, at: '/stripe-event'
+  mount StripeEvent::Engine, at: '/stripe-event'  # provide a custom path
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
