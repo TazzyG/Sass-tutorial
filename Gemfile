@@ -54,7 +54,11 @@ gem 'nokogiri'
 # for processing stripe events
 gem 'stripe_event', '~> 1.5'
 
+# for tenatizing database
+gem 'apartment', '~> 1.0', '>= 1.0.2'
 
+# for storing tenant name 
+gem 'apartment-sidekiq', '~> 0.2.0'
 
 
 
@@ -78,7 +82,7 @@ group :development, :test do
   gem 'spring'
 
   # For forwarding stripe events with localhost
-  
+
   gem 'ultrahook'
 
 end
