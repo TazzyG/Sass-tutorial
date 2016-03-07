@@ -2,7 +2,8 @@ Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   # http://stackoverflow.com/questions/11056511/request-subdomain-is-not-being-set-in-rails-3-during-conditional-routing
-  #####config.action_dispatch.tld_length = 2
+  ## config.action_dispatch.tld_length = 2
+  ## use lvh.me:3000 to test instead :)
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
@@ -16,7 +17,7 @@ Rails.application.configure do
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
 
-  # Don't care if the mailer can't send.
+  #  care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = true
 
   # Print deprecation notices to the Rails logger.
@@ -43,5 +44,8 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   # Configuration for devise
-  config.action_mailer.default_url_options = { :host =>'localhost:5000'}
+  config.action_mailer.default_url_options = { :host =>'http://myfriendlyroad.dev:3000/'}
+
+  # For opening emails in the browser
+  config.action_mailer.delivery_method = :letter_opener
 end

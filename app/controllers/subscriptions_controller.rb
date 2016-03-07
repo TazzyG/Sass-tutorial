@@ -1,6 +1,7 @@
 class SubscriptionsController < ApplicationController
     
     before_action :authenticate_user!
+    before_action :authorize_user
     
 
     def new
@@ -15,10 +16,6 @@ class SubscriptionsController < ApplicationController
     def index
         @account = Account.find_by_email(current_user.email)
     end
-
-   
-
-   
 
     def create
         # Get the credit card details submitted by the form
@@ -166,6 +163,17 @@ class SubscriptionsController < ApplicationController
 
 
     end
+
+    #Authorize user or raise exception
+    def authorize_user
+
+        authorize! :manage, :subscriptions
+
+    
+    end
+
+    end
+
 
 
     

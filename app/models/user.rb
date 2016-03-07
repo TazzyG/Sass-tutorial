@@ -1,14 +1,18 @@
 class User < ActiveRecord::Base
+  rolify
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
-         #:confirmable, :async
+  devise :invitable, :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :trackable, :validatable,
+         :confirmable
+         #, :async
 
   validate :email_is_unique, on: :create_account
   validate :subdomain_is_unique, on: :create_account
   after_validation :create_tenant
   after_create :create_account
+  after_create :add_role_to_user
 
   # https://github.com/plataformatec/devise/issues/3550
   #def send_devise_notification(notification, *args)
@@ -16,9 +20,9 @@ class User < ActiveRecord::Base
   #end
 
 
-  def confirmation_required?
-    false
-  end
+  # def confirmation_required?
+  #   false
+  # end
 
   private
 
@@ -59,5 +63,14 @@ class User < ActiveRecord::Base
     end
     #Change schema to the tenant
     Apartment::Tenant.switch!(subdomain)
+  end
+
+  #Add default role to user who signs up
+  def add_role_to_user
+    if created_by_invite? 
+      add_role :app_user
+    else
+      add_role :app_admin
+    end
   end
 end

@@ -27,7 +27,11 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'rails_12factor', group: :production
 
 # authentication 
-gem 'devise', '~> 3.5', '>= 3.5.6'
+gem 'devise', '~> 3.5.2'
+
+# for sending email invites
+gem 'devise_invitable', '~> 1.5.2'
+
 
 # makes messages prettier and easy to read
 gem 'awesome_print', '~> 1.6', '>= 1.6.1'
@@ -60,7 +64,11 @@ gem 'apartment', '~> 1.0', '>= 1.0.2'
 # for storing tenant name 
 gem 'apartment-sidekiq', '~> 0.2.0'
 
+# create roles
+gem 'rolify', '4.0.0'
 
+# authorization
+gem 'cancancan', '~> 1.10'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
@@ -84,6 +92,10 @@ group :development, :test do
   # For forwarding stripe events with localhost
 
   gem 'ultrahook'
+
+  # open emails in the browser, for testing
+	gem 'letter_opener', '~> 1.4', '>= 1.4.1'
+
 
 end
 
