@@ -65,7 +65,7 @@ gem 'apartment', '~> 1.0', '>= 1.0.2'
 gem 'apartment-sidekiq', '~> 0.2.0'
 
 # create roles
-gem 'rolify', '4.0.0'
+gem "rolify"
 
 # authorization
 gem 'cancancan', '~> 1.10'
