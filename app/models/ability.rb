@@ -32,7 +32,6 @@ class Ability
     user ||= User.new # guest user (not logged in)
 
     can :manage, :subscriptions if user.has_role? :app_admin
-    
 
   end
 end

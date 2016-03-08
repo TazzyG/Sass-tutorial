@@ -68,7 +68,7 @@ gem 'apartment-sidekiq', '~> 0.2.0'
 gem "rolify"
 
 # authorization
-gem 'cancancan', '~> 1.10'
+gem 'cancancan', '1.13.1'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

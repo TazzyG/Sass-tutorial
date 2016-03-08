@@ -166,17 +166,8 @@ class SubscriptionsController < ApplicationController
 
     #Authorize user or raise exception
     def authorize_user
-
         authorize! :manage, :subscriptions
-
-    
-    end
-
-    
-
-
-
-    
+    end    
 end
 
 

@@ -78,5 +78,5 @@ Rails.application.configure do
   config.active_record.dump_schema_after_migration = false
 
   # Configuration for devise
-  config.action_mailer.default_url_options = { host: 'sass-tutorial.herokuapp.com'}
+  config.action_mailer.default_url_options = { host: 'strongtomorrow.com'}
 end

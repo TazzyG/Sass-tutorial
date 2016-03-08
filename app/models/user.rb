@@ -1,28 +1,29 @@
 class User < ActiveRecord::Base
+  
   rolify
+
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :invitable, :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable,
-         :confirmable
-         #, :async
+         :confirmable, :async
 
-  validate :email_is_unique, on: :create_account
-  validate :subdomain_is_unique, on: :create_account
+  validate :email_is_unique, on: :create
+  validate :subdomain_is_unique, on: :create
   after_validation :create_tenant
   after_create :create_account
   after_create :add_role_to_user
 
   # https://github.com/plataformatec/devise/issues/3550
-  #def send_devise_notification(notification, *args)
-  #devise_mailer.send(notification, self, *args).deliver_later
-  #end
+  def send_devise_notification(notification, *args)
+  devise_mailer.send(notification, self, *args).deliver_later
+  end
 
 
-  # def confirmation_required?
-  #   false
-  # end
+  def confirmation_required?
+     false
+  end
 
   private
 
